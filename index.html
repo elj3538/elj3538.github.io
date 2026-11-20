@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>銘柄診断スクリーナー ポータル（日米・長期＆配当 4サイト統合ハブ）</title>
+<style>
+:root {
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --border: #dfe5ef;
+  --text: #162032;
+  --muted: #5c6a80;
+  --accent: #1d5fd6;
+  --accent-soft: #eaf1ff;
+  --us-accent: #1d5fd6;
+  --jp-accent: #0f766e;
+  --good: #137333;
+  --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+body.dark {
+  --bg: #0d131c;
+  --surface: #161f2e;
+  --border: #273449;
+  --text: #e8eef7;
+  --muted: #98a6be;
+  --accent: #5e9bff;
+  --accent-soft: #1b2a44;
+  --us-accent: #5e9bff;
+  --jp-accent: #2dd4bf;
+  --good: #6ee79c;
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.hub-bar {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 8px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  border-bottom: 1px solid #1e293b;
+}
+.hub-bar a {
+  color: #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background .15s, color .15s;
+}
+.hub-bar a:hover { background: #1e293b; color: #fff; text-decoration: none; }
+.hub-bar a.hub-active { background: #2563eb; color: #fff; }
+.hub-bar .spacer { margin-left: auto; }
+.hub-bar button {
+  background: #1e293b; color: #e2e8f0; border: 1px solid #334155;
+  border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px;
+}
+.hub-bar button:hover { border-color: #60a5fa; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding: 28px 18px 64px; }
+.hero {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+.hero p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform .15s ease, border-color .15s ease;
+}
+.card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.tag-us { background: rgba(29,95,214,0.12); color: var(--us-accent); }
+.tag-jp { background: rgba(15,118,110,0.13); color: var(--jp-accent); }
+.card h2 {
+  margin: 4px 0 4px;
+  font-size: 18px;
+}
+.desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.stats-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+}
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.stats-row strong { color: var(--text); }
+.top3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.top3 a {
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.top3 a:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+.actions {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.btn-main {
+  flex: 1 1 100%;
+  text-align: center;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.btn-main:hover { opacity: .92; text-decoration: none; }
+.btn-sub {
+  flex: 1;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text) !important;
+  font-size: 12px;
+}
+.btn-sub:hover { border-color: var(--accent); text-decoration: none; }
+.foot {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+<div class="hub-bar">
+  <a href="https://elj3538.github.io/" class="hub-active">🏠 ポータル</a>
+  <a href="https://elj3538.github.io/us-long-screener/">🇺🇸 米国10年保有</a>
+  <a href="https://elj3538.github.io/us-dividend-screener/">🇺🇸 米国配当株</a>
+  <a href="https://elj3538.github.io/jp-long-screener/">🇯🇵 日本10年保有</a>
+  <a href="https://elj3538.github.io/jp-dividend-screener/">🇯🇵 日本配当株</a>
+  <span class="spacer"></span>
+  <button onclick="toggleDark()">🌙 テーマ切替</button>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>📊 日米 銘柄診断スクリーナー ポータル</h1>
+    <p>米国株・日本株の「10年保有（優良企業）」と「配当株（軍分け）」全4サイトを1つの入口から横断チェックできます（毎日自動更新）</p>
+  </div>
+
+  <div class="grid" id="cards"></div>
+
+  <div class="foot">
+    各サイトは GitHub Actions により毎営業日自動更新されます（米国株: 火〜土 朝 ／ 日本株: 月〜金 19:00〜19:30 JST）。<br>
+    投資判断はご自身の責任で行ってください。
+  </div>
+</div>
+
+<script>
+const SITES = [
+  {
+    id: "us-long",
+    region: "US",
+    tag: "🇺🇸 米国株・長期成長",
+    title: "米国株 10年保有スクリーナー",
+    desc: "S&P 500全銘柄を「ファンダ点（配当抜き品質）」と「買い時スコア」の2軸で評価。オプション取引候補ページ付き。",
+    url: "https://elj3538.github.io/us-long-screener/",
+    schedule: "火〜土 朝 自動更新",
+    extraLinks: [
+      { label: "🎯 オプション候補", path: "options.html" },
+      { label: "☆ ウォッチ", path: "watchlist.html" },
+      { label: "💼 PF", path: "portfolio.html" },
+    ],
+  },
+  {
+    id: "us-div",
+    region: "US",
+    tag: "🇺🇸 米国株・高配当",
+    title: "米国株 配当株 軍分けランキング",
+    desc: "S&P 1500から配当条件（利回り≥1.5%・5年非減配）で厳選。配当王・配当貴族特集、ドル建て年間予想配当シミュレーター付き。",
+    url: "https://elj3538.github.io/us-dividend-screener/",
+    schedule: "火〜土 08:00 JST",
+    extraLinks: [
+      { label: "☆ ウォッチ", path: "watchlist.html" },
+      { label: "💼 配当PF", path: "portfolio.html" },
+      { label: "📖 ガイド", path: "guide.html" },
+    ],
+  },
+  {
+    id: "jp-long",
+    region: "JP",
+    tag: "🇯🇵 日本株・長期成長",
+    title: "日本株 10年保有スクリーナー",
+    desc: "TOPIX 500相当（Core30/Large70/Mid400）を独自12業種グループで軍分け。自己資本比率・金融/リース専用モデル搭載。",
+    url: "https://elj3538.github.io/jp-long-screener/",
+    schedule: "月〜金 19:00 JST",
+    extraLinks: [
+      { label: "☆ ウォッチ", path: "watchlist.html" },
+      { label: "💼 円建てPF", path: "portfolio.html" },
+      { label: "📖 ガイド", path: "guide.html" },
+    ],
+  },
+  {
+    id: "jp-div",
+    region: "JP",
+    tag: "🇯🇵 日本株・高配当",
+    title: "日本株 配当株 軍分けランキング",
+    desc: "東証プライム・スタンダードから配当条件（利回り≥2.0%・時価総額≥300億・5年非減配）で抽出。13業種・業種内偏差値・税引後配当PF付き。",
+    url: "https://elj3538.github.io/jp-dividend-screener/",
+    schedule: "月〜金 19:30 JST",
+    extraLinks: [
+      { label: "☆ ウォッチ", path: "watchlist.html" },
+      { label: "💼 配当PF", path: "portfolio.html" },
+      { label: "📖 ガイド", path: "guide.html" },
+    ],
+  },
+];
+
+function toggleDark() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("portal_dark", document.body.classList.contains("dark") ? "1" : "0");
+}
+if (localStorage.getItem("portal_dark") === "1") document.body.classList.add("dark");
+
+function renderCards() {
+  const box = document.getElementById("cards");
+  box.innerHTML = SITES.map(s => `
+    <article class="card">
+      <div class="card-top">
+        <span class="tag ${s.region === 'US' ? 'tag-us' : 'tag-jp'}">${s.tag}</span>
+        <span style="font-size:11.5px;color:var(--muted);">${s.schedule}</span>
+      </div>
+      <div>
+        <h2><a href="${s.url}" style="color:var(--text);">${s.title}</a></h2>
+        <p class="desc">${s.desc}</p>
+      </div>
+      <div class="stats-box" id="stat-${s.id}">
+        <span style="color:var(--muted);">最新データを読み込み中...</span>
+      </div>
+      <div class="actions">
+        <a class="btn-main" href="${s.url}">ランキングを開く →</a>
+        ${s.extraLinks.map(l => `<a class="btn-sub" href="${s.url}${l.path}">${l.label}</a>`).join("")}
+      </div>
+    </article>
+  `).join("");
+
+  SITES.forEach(loadStats);
+}
+
+async function loadStats(site) {
+  const el = document.getElementById("stat-" + site.id);
+  try {
+    const res = await fetch(site.url + "ranking.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const items = data.items || data.stocks || [];
+    const total = data.total_count || data.count || items.length;
+    const t1 = items.filter(x => x.tier_num === 1 || x.tier === 1 || x.tier === "1軍").length;
+    const dt = data.latest_price_date || (data.generated_at ? data.generated_at.slice(0, 10) : "―");
+    const getScore = x => x.selection_score ?? x.select_score ?? x.funda_score ?? x.quality_score ?? 0;
+    const getId = x => x.code || x.symbol || "";
+    const top3 = [...items].sort((a, b) => getScore(b) - getScore(a)).slice(0, 3);
+    el.innerHTML = `
+      <div class="stats-row">
+        <span>対象: <strong>${total}銘柄</strong>（1軍 <strong>${t1}</strong>）</span>
+        <span>終値日: <strong>${dt}</strong></span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);">上位ピックアップ:</div>
+      <div class="top3">
+        ${top3.map(x => {
+          const id = getId(x);
+          const sc = getScore(x);
+          return `<a href="${site.url}reports/${id}.html"><strong>${id}</strong> ${x.name ? x.name.slice(0, 10) : ""} (${Number(sc).toFixed(0)}点)</a>`;
+        }).join("")}
+      </div>
+    `;
+  } catch (e) {
+    el.innerHTML = `<span style="color:var(--muted);">初回ビルド完了後に最新サマリーが表示されます</span>`;
+  }
+}
+
+renderCards();
+</script>
+</body>
+</html>
