@@ -137,6 +137,7 @@ a:hover { text-decoration: underline; }
   <a href="https://elj3538.github.io/jp-long-screener/" target="_blank" rel="noopener noreferrer">🇯🇵 日本10年保有 ↗</a>
   <a href="https://elj3538.github.io/jp-dividend-screener/" target="_blank" rel="noopener noreferrer">🇯🇵 日本配当株 ↗</a>
   <a href="https://elj3538.github.io/us-economic-tracker/" target="_blank" rel="noopener noreferrer">📊 米国経済指標 ↗</a>
+  <a href="https://elj3538.github.io/jp-economic-tracker/" target="_blank" rel="noopener noreferrer">🗾 日本経済指標 ↗</a>
   <span class="spacer"></span>
   <button onclick="toggleDark()">🌙 テーマ切替</button>
 </div>
@@ -228,6 +229,15 @@ const ECON_SITES = [
     desc: "FRED公開データから米国主要38指標・マーケット6項目を自動取得。景気後退警戒コンボ・zスコア急変・2指標比較・FOMCカレンダー搭載。",
     url: "https://elj3538.github.io/us-economic-tracker/",
     schedule: "火〜土 08:30 JST",
+  },
+  {
+    id: "jp-econ",
+    tagCls: "tag-jp",
+    tag: "🇯🇵 日本マクロ・e-Stat/FRED 27指標",
+    title: "日本経済指標トラッカー",
+    desc: "統計ダッシュボード（e-Stat）＆FREDから日本主要27指標を自動取得。日本の景気を見る（先行・一致・遅行）・日銀会合カレンダー搭載。",
+    url: "https://elj3538.github.io/jp-economic-tracker/",
+    schedule: "月〜金 19:45 JST",
   },
 ];
 
