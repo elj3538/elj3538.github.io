@@ -78,8 +78,11 @@ a:hover { text-decoration: underline; }
 .sec-label { font-size: 15px; font-weight: 700; margin: 22px 0 12px; color: var(--muted); }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+}
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; }
 }
 .card {
   background: var(--surface);
@@ -148,8 +151,11 @@ a:hover { text-decoration: underline; }
     <p>各サイトは<strong>別タブ</strong>で開くため、このポータルを開いたまま複数サイトを並行チェックできます（全サイト毎日自動更新）</p>
   </div>
 
-  <div class="sec-label">📈 株式スクリーナー・軍分けランキング（4サイト）</div>
-  <div class="grid" id="stock-cards"></div>
+  <div class="sec-label">🇺🇸 米国株 スクリーナー・軍分けランキング</div>
+  <div class="grid" id="us-stock-cards"></div>
+
+  <div class="sec-label">🇯🇵 日本株 スクリーナー・軍分けランキング</div>
+  <div class="grid" id="jp-stock-cards"></div>
 
   <div class="sec-label">🌍 マクロ経済指標トラッカー</div>
   <div class="grid" id="econ-cards"></div>
@@ -247,8 +253,8 @@ function toggleDark() {
 }
 if (localStorage.getItem("portal_dark") === "1") document.body.classList.add("dark");
 
-function renderAll() {
-  document.getElementById("stock-cards").innerHTML = STOCK_SITES.map(s => `
+function renderStockCard(s) {
+  return `
     <article class="card">
       <div class="card-top">
         <span class="tag ${s.tagCls}">${s.tag}</span>
@@ -266,7 +272,14 @@ function renderAll() {
         ${s.extraLinks.map(l => `<a class="btn-sub" href="${s.url}${l.path}" target="_blank" rel="noopener noreferrer">${l.label}</a>`).join("")}
       </div>
     </article>
-  `).join("");
+  `;
+}
+
+function renderAll() {
+  const usStocks = STOCK_SITES.filter(s => s.id.startsWith("us-"));
+  const jpStocks = STOCK_SITES.filter(s => s.id.startsWith("jp-"));
+  document.getElementById("us-stock-cards").innerHTML = usStocks.map(renderStockCard).join("");
+  document.getElementById("jp-stock-cards").innerHTML = jpStocks.map(renderStockCard).join("");
 
   document.getElementById("econ-cards").innerHTML = ECON_SITES.map(s => `
     <article class="card">
